@@ -47,4 +47,12 @@ public class Score {
     public void setScore(int score) {
         this.score = score;
     }
+
+    @Override
+    public String toString() {
+        return "Score{" +
+                " playerName='" + playerName + '\'' +
+                ", score=" + score +
+                '}';
+    }
 }

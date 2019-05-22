@@ -138,6 +138,8 @@ public class MastermindGame extends Fragment {
                     FeedbackAdapter adapter = (FeedbackAdapter) feedbackView.getAdapter();
                     adapter.getDataset().offerFirst(new MastermindFeedback(guess, response));
                     adapter.notifyDataSetChanged();
+
+                    Toast.makeText(getContext(), "Guesses left: " + response.guessesLeft, Toast.LENGTH_LONG).show();
                     Log.i(LOGGER_TAG, String.valueOf(adapter.getItemCount()));
                 }
             }
