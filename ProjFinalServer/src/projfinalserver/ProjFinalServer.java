@@ -28,7 +28,7 @@ public class ProjFinalServer {
     public static void main(String[] args) {
         try {
             System.out.println(Integer.valueOf(String.valueOf('0')) + 2);
-            new Thread(new MMDispatchServer("10.4.131.9", 42069)).start();
+            new Thread(new MMDispatchServer("192.168.1.114", 42069)).start();
 //            Socket tester = new Socket();
 //            tester.bind(new InetSocketAddress(0));
 //            System.out.println(String.format("Created socket with address %s", tester.getLocalAddress()));

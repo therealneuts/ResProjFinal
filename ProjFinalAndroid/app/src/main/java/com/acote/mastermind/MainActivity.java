@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import android.view.MenuItem;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -26,6 +27,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 
+
+//MainActivity charge les fragments et se charge de la communication entre ceux-ci et l'activité ScoreAddActivity
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MastermindGame.OnMastermindInteractionListener {
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     FloatingActionButton fab;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +52,8 @@ public class MainActivity extends AppCompatActivity
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                newGame();
+            public void onClick(View v) {
+                onFragmentInteraction(420);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -60,28 +64,29 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Reçoit une référence au ViewModel de la BD, créée selon l'architecture MVC.
         mScoreViewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
 
-        mScoreList = ScoreListFragment.newInstance();
+        if (mScoreList == null) {
+            mScoreList = ScoreListFragment.newInstance();
 
-        getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.main_frameLayout, mScoreList)
-                                    .addToBackStack(null)
-                                    .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_frameLayout, mScoreList)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
+    //Commence une nouvelle partie. À fin de débogage, la fonction du floating action button
+    //me fait instantanément gagner la partie. Les parties sont gérées par le fragment MastermindGame.
     private void newGame() {
-        MastermindGame game = MastermindGame.newInstance(10, false, false, "10.4.131.9", 42069);
+        MastermindGame game = MastermindGame.newInstance(10, false, false, "192.168.1.114", 42069);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_frameLayout, game)
+                .addToBackStack(null)
                 .commit();
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onFragmentInteraction(420);
-            }
-        });
+
     }
 
     @Override
@@ -94,6 +99,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //Code générique produit par Android Studio.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -116,31 +122,20 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    //Se charge du menu de navigation sur la gauche.
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_high_scores) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_frameLayout, mScoreList)
                     .commit();
 
-        } else if (id == R.id.nav_gallery) {
-            MastermindGame game = MastermindGame.newInstance(10, false, false, "10.4.131.9", 42069);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_frameLayout, game)
-                    .commit();
+        } else if (id == R.id.nav_new_game) {
+            newGame();
 
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
@@ -149,8 +144,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private String playerName;
 
+
+    //Événement lancé lorsque l'usager gagne une partie gérée par le fragment MastermindGame.
+    //MastermindGame envoie le score de l'usager à MainActivity, qui lance une nouvelle activité
+    //lui demandant son pseudonyme. Ceci produit une nouvelle entrée ajoutée à la BD, qui est
+    //observée par le fragment ScoreListFragment. Ainsi, les fragments communiquent entre eux.
     @Override
     public void onFragmentInteraction(int score) {
 
@@ -167,6 +166,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
+    //OnActivityResult, ajout d'une nouvelle entrée dans la BD.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         Log.i("MAIN", String.valueOf(requestCode));
@@ -191,4 +191,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 }

@@ -9,12 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+//Activité simple qui est lancée lorsque l'usager gagne. On affiche son score et on lui demande d'entrer son nom
+//Pour l'ajouter à la BD.
 public class ScoreAddActivity extends AppCompatActivity {
 
     private TextView tvCongrats;
     private EditText etName;
 
-    public static final int RESULT_NOINPUT = 0;
 
     public static final String BUNDLE_NAME = "name";
 
@@ -30,7 +31,11 @@ public class ScoreAddActivity extends AppCompatActivity {
 
         final int score = extras.getInt(MainActivity.BUNDLE_SCORE);
 
-        tvCongrats.setText("Congrats! Your score is " + score + "! Please enter your name");
+        String prompt = String.format("%s %d \n %s", getResources().getString(R.string.win_prompt_1),
+                score,
+                getResources().getString(R.string.win_prompt_2));
+
+        tvCongrats.setText(prompt);
 
         Button btDone = findViewById(R.id.btDone);
 

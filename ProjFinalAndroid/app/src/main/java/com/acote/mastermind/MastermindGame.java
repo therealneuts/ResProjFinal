@@ -72,6 +72,8 @@ public class MastermindGame extends Fragment {
         return fragment;
     }
 
+    //Récupère les options de difficulté fournies par l'usager, crée un objet MMSettings (qui sera serialisé et envoyé au serveur)
+    //puis crée une thread qui sera chargée de communiquer avec le serveur.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +87,9 @@ public class MastermindGame extends Fragment {
 
         MMSettings settings = new MMSettings(mGuesses, mDuplicates, mBlanks);
 
+        //Ma class MMClient comporte une interface, MMResponseCallback, qui est un paramètre nécessaire du constructeur.
+        //En instanciant un objet anonyme qui implémente ses méthodes, je permet à ce fragment de répondre aux
+        //Événements qui se produisent lors de la communication avec le serveur.
         game = new MMClient(mServerIP, mServerPort, settings, new MMClient.MMResponseCallback() {
             @Override
             public void onConnectionReady() {
@@ -92,7 +97,7 @@ public class MastermindGame extends Fragment {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), "Connection successful!", Toast.LENGTH_LONG).show();
+                        Log.i(LOGGER_TAG, "Connection successful!");
                     }
                 });
             }
@@ -125,6 +130,7 @@ public class MastermindGame extends Fragment {
 
     }
 
+    //Quand l'usager gagne, on envoie un message à MainActivity.
     private void win(MMHint response) {
         mListener.onFragmentInteraction(response.score);
     }

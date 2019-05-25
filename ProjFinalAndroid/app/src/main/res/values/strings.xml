@@ -17,7 +17,12 @@
     <string name="score_list_label">HIGH SCORES</string>
 
     <!--  -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="invalid_cast_error">Failed to cast class.</string>
+
+
+    <string name="win_prompt_1">Congratualtions! Your score is:</string>
+    <string name="win_prompt_2">Please enter your name:</string>
+    <string name="win_prompt_edt_tltip">Name or nickname</string>
+    <string name="win_prompt_btn">Done</string>
 </resources>
